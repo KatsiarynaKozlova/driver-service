@@ -14,7 +14,6 @@ import org.hibernate.annotations.SQLDelete
 @Entity
 @Table(name = "cars")
 @SQLDelete(sql = "UPDATE cars SET is_deleted = true WHERE car_id=?")
-@Setter
 data class Car(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

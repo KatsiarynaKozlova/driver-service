@@ -1,13 +1,7 @@
 package com.software.modsen.driverservice.dto.request
 
 import com.software.modsen.driverservice.model.Driver
-import lombok.AllArgsConstructor
-import lombok.Getter
-import lombok.Setter
 
-@Getter
-@Setter
-@AllArgsConstructor
 data class DriverRequest(
     val name: String,
     val email: String,
