@@ -1,7 +1,5 @@
 package com.software.modsen.driverservice.model
 
-import com.software.modsen.driverservice.dto.response.DriverResponse
-import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

@@ -1,7 +1,6 @@
 package com.software.modsen.driverservice.service
 
 import com.software.modsen.driverservice.dto.request.DriverRequest
-import com.software.modsen.driverservice.dto.request.toDriver
 import com.software.modsen.driverservice.dto.response.DriverListResponse
 import com.software.modsen.driverservice.dto.response.DriverResponse
 import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
@@ -9,10 +8,11 @@ import com.software.modsen.driverservice.exception.CarNotFoundException
 import com.software.modsen.driverservice.exception.DriverNotFoundException
 import com.software.modsen.driverservice.exception.EmailAlreadyExistException
 import com.software.modsen.driverservice.exception.PhoneAlreadyExistException
+import com.software.modsen.driverservice.mapper.toDriver
+import com.software.modsen.driverservice.mapper.toDriverResponse
+import com.software.modsen.driverservice.mapper.toDriverWithCarResponse
 import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.model.Driver
-import com.software.modsen.driverservice.model.toDriverResponse
-import com.software.modsen.driverservice.model.toDriverWithCarResponse
 import com.software.modsen.driverservice.repository.CarRepository
 import com.software.modsen.driverservice.repository.DriverRepository
 import com.software.modsen.driverservice.util.ExceptionMessages
@@ -25,14 +25,10 @@ class DriverService(
     private val driverRepository: DriverRepository,
     private val carRepository: CarRepository
 ) {
-    fun getDriverById(id: Long): DriverWithCarResponse {
-        return getByIdOrElseThrow(id).toDriverWithCarResponse()
-    }
+    fun getDriverById(id: Long): DriverWithCarResponse = getByIdOrElseThrow(id).toDriverWithCarResponse()
 
-    fun getAllDrivers(): DriverListResponse {
-        return DriverListResponse(driverRepository.findAll()
-            .map { it.toDriverResponse() })
-    }
+    fun getAllDrivers(): DriverListResponse =
+        DriverListResponse(driverRepository.findAll().map { it.toDriverResponse() })
 
     fun createDriver(driverRequest: DriverRequest): DriverResponse {
         preCreateValidateDriver(driverRequest)
@@ -49,14 +45,10 @@ class DriverService(
         return driverRepository.save(driver).toDriverResponse()
     }
 
-    fun deleteDriver(id: Long) {
-        driverRepository.deleteById(id)
-    }
+    fun deleteDriver(id: Long) = driverRepository.deleteById(id)
 
-    private fun getByIdOrElseThrow(id: Long): Driver {
-        return driverRepository.findById(id)
-            .orElseThrow { DriverNotFoundException(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION.format(id)) }
-    }
+    private fun getByIdOrElseThrow(id: Long): Driver = driverRepository.findById(id)
+        .orElseThrow { DriverNotFoundException(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION.format(id)) }
 
     private fun checkEmailExist(email: String) {
         if (driverRepository.existsByEmail(email)) {
@@ -84,8 +76,6 @@ class DriverService(
         }
     }
 
-    private fun getCarByIdOrElseThrow(id: Long): Car {
-        return carRepository.findById(id)
-            .orElseThrow { CarNotFoundException(ExceptionMessages.CAR_NOT_FOUND_EXCEPTION.format(id)) }
-    }
+    private fun getCarByIdOrElseThrow(id: Long): Car = carRepository.findById(id)
+        .orElseThrow { CarNotFoundException(ExceptionMessages.CAR_NOT_FOUND_EXCEPTION.format(id)) }
 }

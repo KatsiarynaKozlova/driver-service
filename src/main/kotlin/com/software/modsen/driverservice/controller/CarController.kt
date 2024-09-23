@@ -24,28 +24,21 @@ class CarController(
     private val carService: CarService
 ) {
     @GetMapping("/{id}")
-    fun getCarById(@PathVariable id: Long): ResponseEntity<CarResponse> {
-        return ResponseEntity.ok().body(carService.getCarById(id))
-    }
+    fun getCarById(@PathVariable id: Long): ResponseEntity<CarResponse> =
+        ResponseEntity.ok().body(carService.getCarById(id))
 
     @GetMapping
-    fun getAllCars(): ResponseEntity<CarListResponse> {
-        return ResponseEntity.ok().body(carService.getAllCars())
-    }
+    fun getAllCars(): ResponseEntity<CarListResponse> = ResponseEntity.ok().body(carService.getAllCars())
 
     @PostMapping
-    fun createCar(@RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest))
-    }
+    fun createCar(@RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> =
+        ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest))
 
     @PutMapping("/{id}")
-    fun updateCar(@PathVariable id: Long, @RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
-        return ResponseEntity.ok().body(carService.updateCar(id, carRequest))
-    }
+    fun updateCar(@PathVariable id: Long, @RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> =
+        ResponseEntity.ok().body(carService.updateCar(id, carRequest))
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    fun deleteCar(@PathVariable id: Long) {
-        carService.deleteCar(id);
-    }
+    fun deleteCar(@PathVariable id: Long) = carService.deleteCar(id)
 }
