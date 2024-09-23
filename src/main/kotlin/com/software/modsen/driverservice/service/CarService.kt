@@ -33,8 +33,8 @@ class CarService(
     }
 
     fun updateCar(id: Long, carRequest: CarRequest): CarResponse {
-        val car_opt: Car = getByIdOrElseThrow(id)
-        validateCarUpdate(carRequest, car_opt)
+        val carOptional: Car = getByIdOrElseThrow(id)
+        validateCarUpdate(carRequest, carOptional)
         val car: Car = carRequest.toCar()
         car.carId = id
         return carRepository.save(car).toCarResponse()

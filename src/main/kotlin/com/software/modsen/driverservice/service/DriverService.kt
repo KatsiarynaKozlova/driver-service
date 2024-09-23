@@ -42,8 +42,8 @@ class DriverService(
     }
 
     fun updateDriver(id: Long, driverRequest: DriverRequest): DriverResponse {
-        val driver_opt: Driver = getByIdOrElseThrow(id)
-        preUpdateValidateCar(driverRequest, driver_opt)
+        val driverOptional: Driver = getByIdOrElseThrow(id)
+        preUpdateValidateCar(driverRequest, driverOptional)
         val driver: Driver = driverRequest.toDriver()
         driver.driverId = id
         return driverRepository.save(driver).toDriverResponse()
