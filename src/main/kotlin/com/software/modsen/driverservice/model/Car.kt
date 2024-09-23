@@ -30,13 +30,3 @@ data class Car(
     @Column(name = "is_deleted")
     var isDeleted: Boolean = false
 )
-
-fun Car.toCarResponse(): CarResponse {
-    return CarResponse(
-        carId = this.carId,
-        color = this.color,
-        model = this.model,
-        licensePlate = this.licensePlate,
-        year = this.year
-    )
-}

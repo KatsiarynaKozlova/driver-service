@@ -35,24 +35,3 @@ data class Driver(
     @Column(name = "is_deleted")
     var isDeleted: Boolean = false
 )
-
-fun Driver.toDriverResponse(): DriverResponse {
-    return DriverResponse(
-        driverId = this.driverId,
-        name = this.name,
-        email = this.email,
-        phone = this.phone,
-        sex = this.sex
-    )
-}
-
-fun Driver.toDriverWithCarResponse(): DriverWithCarResponse {
-    return DriverWithCarResponse(
-        driverId = this.driverId,
-        name = this.name,
-        email = this.email,
-        phone = this.phone,
-        sex = this.sex,
-        car = this.car!!.toCarResponse()
-    )
-}

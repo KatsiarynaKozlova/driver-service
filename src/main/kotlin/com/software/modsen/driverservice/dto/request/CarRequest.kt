@@ -8,13 +8,3 @@ data class CarRequest(
     val licensePlate: String,
     val year: Int,
 )
-
-fun CarRequest.toCar(): Car {
-    return Car(
-        carId = null,
-        color = this.color,
-        model = this.model,
-        licensePlate = this.licensePlate,
-        year = this.year
-    )
-}
