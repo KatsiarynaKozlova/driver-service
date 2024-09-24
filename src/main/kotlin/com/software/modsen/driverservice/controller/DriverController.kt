@@ -4,6 +4,8 @@ import com.software.modsen.driverservice.dto.request.DriverRequest
 import com.software.modsen.driverservice.dto.response.DriverListResponse
 import com.software.modsen.driverservice.dto.response.DriverResponse
 import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
+import com.software.modsen.driverservice.mapper.toDriverResponse
+import com.software.modsen.driverservice.mapper.toDriverWithCarResponse
 import com.software.modsen.driverservice.service.DriverService
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
@@ -26,20 +28,22 @@ class DriverController(
 ) {
     @GetMapping("/{id}")
     fun gerDriverById(@PathVariable id: Long): ResponseEntity<DriverWithCarResponse> =
-        ResponseEntity.ok().body(driverService.getDriverById(id))
+        ResponseEntity.ok(driverService.getDriverById(id).toDriverWithCarResponse())
 
     @GetMapping
-    fun getAllDrivers(): ResponseEntity<DriverListResponse> = ResponseEntity.ok().body(driverService.getAllDrivers())
+    fun getAllDrivers(): ResponseEntity<DriverListResponse> =
+        ResponseEntity.ok(DriverListResponse(driverService.getAllDrivers().map { it.toDriverResponse() }))
 
     @PostMapping
     fun createDriver(@RequestBody driverRequest: DriverRequest): ResponseEntity<DriverResponse> =
-        ResponseEntity.status(HttpStatus.CREATED).body(driverService.createDriver(driverRequest))
+        ResponseEntity.status(HttpStatus.CREATED).body(driverService.createDriver(driverRequest).toDriverResponse())
 
     @PutMapping("/{id}")
     fun updateDriver(
         @PathVariable id: Long,
         @RequestBody driverRequest: DriverRequest
-    ): ResponseEntity<DriverResponse> = ResponseEntity.ok().body(driverService.updateDriver(id, driverRequest))
+    ): ResponseEntity<DriverResponse> =
+        ResponseEntity.ok(driverService.updateDriver(id, driverRequest).toDriverResponse())
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")

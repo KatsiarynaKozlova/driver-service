@@ -3,6 +3,7 @@ package com.software.modsen.driverservice.controller
 import com.software.modsen.driverservice.dto.request.CarRequest
 import com.software.modsen.driverservice.dto.response.CarListResponse
 import com.software.modsen.driverservice.dto.response.CarResponse
+import com.software.modsen.driverservice.mapper.toCarResponse
 import com.software.modsen.driverservice.service.CarService
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
@@ -25,18 +26,19 @@ class CarController(
 ) {
     @GetMapping("/{id}")
     fun getCarById(@PathVariable id: Long): ResponseEntity<CarResponse> =
-        ResponseEntity.ok().body(carService.getCarById(id))
+        ResponseEntity.ok(carService.getCarById(id).toCarResponse())
 
     @GetMapping
-    fun getAllCars(): ResponseEntity<CarListResponse> = ResponseEntity.ok().body(carService.getAllCars())
+    fun getAllCars(): ResponseEntity<CarListResponse> =
+        ResponseEntity.ok(CarListResponse(carService.getAllCars().map { it.toCarResponse() }))
 
     @PostMapping
     fun createCar(@RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> =
-        ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest))
+        ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest).toCarResponse())
 
     @PutMapping("/{id}")
     fun updateCar(@PathVariable id: Long, @RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> =
-        ResponseEntity.ok().body(carService.updateCar(id, carRequest))
+        ResponseEntity.ok(carService.updateCar(id, carRequest).toCarResponse())
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
