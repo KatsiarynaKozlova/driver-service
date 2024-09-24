@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: Katsiaryna
+      changes:
+        - createTable:
+            tableName: drivers
+            columns:
+              - column:
+                  name: driver_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    checkConstraint: "email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'"
+                    unique: true
+              - column:
+                  name: phone
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: sex
+                  type: varchar(5)
+                  constraints:
+                    checkConstraint: "sex IN ('man','woman')"
+                    nullable: false
+                  defaultValue: "man"
+              - column:
+                  name: car_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_driver_car
+                    references: cars(car_id)
+              - column:
+                  name: is_deleted
+                  type: boolean
+                  defaultValueBoolean: false
+      rollback:
+        - delete:
+            tableName: drivers
