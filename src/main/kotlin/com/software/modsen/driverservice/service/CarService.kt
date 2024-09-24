@@ -18,21 +18,21 @@ import org.springframework.stereotype.Service
 class CarService(
     private val carRepository: CarRepository
 ) {
-    fun getCarById(id: Long): CarResponse = getByIdOrElseThrow(id).toCarResponse()
+    fun getCarById(id: Long): Car = getByIdOrElseThrow(id)
 
-    fun getAllCars(): CarListResponse = CarListResponse(carRepository.findAll().map { it.toCarResponse() })
+    fun getAllCars(): List<Car> = carRepository.findAll()
 
-    fun createCar(carRequest: CarRequest): CarResponse {
+    fun createCar(carRequest: CarRequest): Car {
         checkCarExist(carRequest.licensePlate)
-        return carRepository.save(carRequest.toCar()).toCarResponse()
+        return carRepository.save(carRequest.toCar())
     }
 
-    fun updateCar(id: Long, carRequest: CarRequest): CarResponse {
+    fun updateCar(id: Long, carRequest: CarRequest): Car {
         val carOptional: Car = getByIdOrElseThrow(id)
         validateCarUpdate(carRequest, carOptional)
         val car: Car = carRequest.toCar()
         car.carId = id
-        return carRepository.save(car).toCarResponse()
+        return carRepository.save(car)
     }
 
     fun deleteCar(id: Long) = carRepository.deleteById(id)

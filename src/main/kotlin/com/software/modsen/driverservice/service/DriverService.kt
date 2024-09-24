@@ -25,24 +25,23 @@ class DriverService(
     private val driverRepository: DriverRepository,
     private val carRepository: CarRepository
 ) {
-    fun getDriverById(id: Long): DriverWithCarResponse = getByIdOrElseThrow(id).toDriverWithCarResponse()
+    fun getDriverById(id: Long): Driver = getByIdOrElseThrow(id)
 
-    fun getAllDrivers(): DriverListResponse =
-        DriverListResponse(driverRepository.findAll().map { it.toDriverResponse() })
+    fun getAllDrivers(): List<Driver> = driverRepository.findAll()
 
-    fun createDriver(driverRequest: DriverRequest): DriverResponse {
+    fun createDriver(driverRequest: DriverRequest): Driver {
         preCreateValidateDriver(driverRequest)
         val driver: Driver = driverRequest.toDriver()
         driver.car = getCarByIdOrElseThrow(driverRequest.carId)
-        return driverRepository.save(driver).toDriverResponse()
+        return driverRepository.save(driver)
     }
 
-    fun updateDriver(id: Long, driverRequest: DriverRequest): DriverResponse {
+    fun updateDriver(id: Long, driverRequest: DriverRequest): Driver {
         val driverOptional: Driver = getByIdOrElseThrow(id)
         preUpdateValidateCar(driverRequest, driverOptional)
         val driver: Driver = driverRequest.toDriver()
         driver.driverId = id
-        return driverRepository.save(driver).toDriverResponse()
+        return driverRepository.save(driver)
     }
 
     fun deleteDriver(id: Long) = driverRepository.deleteById(id)
