@@ -1,10 +1,12 @@
 package com.software.modsen.driverservice.service
 
+import com.software.modsen.driverservice.dto.request.DriverForRating
 import com.software.modsen.driverservice.dto.request.DriverRequest
 import com.software.modsen.driverservice.exception.CarNotFoundException
 import com.software.modsen.driverservice.exception.DriverNotFoundException
 import com.software.modsen.driverservice.exception.EmailAlreadyExistException
 import com.software.modsen.driverservice.exception.PhoneAlreadyExistException
+import com.software.modsen.driverservice.kafka.producer.DriverProducer
 import com.software.modsen.driverservice.mapper.toDriver
 import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.model.Driver
@@ -18,7 +20,8 @@ import org.springframework.stereotype.Service
 @RequiredArgsConstructor
 class DriverService(
     private val driverRepository: DriverRepository,
-    private val carRepository: CarRepository
+    private val carRepository: CarRepository,
+    private val driverProducer: DriverProducer
 ) {
     fun getDriverById(id: Long): Driver = getByIdOrElseThrow(id)
 
@@ -26,9 +29,12 @@ class DriverService(
 
     fun createDriver(driverRequest: DriverRequest): Driver {
         preCreateValidateDriver(driverRequest)
-        val driver: Driver = driverRequest.toDriver()
-        driver.car = getCarByIdOrElseThrow(driverRequest.carId)
-        return driverRepository.save(driver)
+        val newDriver: Driver = driverRequest.toDriver()
+        newDriver.car = getCarByIdOrElseThrow(driverRequest.carId)
+        val driver: Driver = driverRepository.save(newDriver)
+        val driverForRating = DriverForRating(driver.driverId!!)
+        driverProducer.sendDriver(driverForRating)
+        return driver
     }
 
     fun updateDriver(id: Long, driverRequest: DriverRequest): Driver {
