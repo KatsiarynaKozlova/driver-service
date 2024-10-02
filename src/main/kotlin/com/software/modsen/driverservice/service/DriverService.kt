@@ -1,16 +1,13 @@
 package com.software.modsen.driverservice.service
 
+import com.software.modsen.driverservice.dto.request.DriverForRating
 import com.software.modsen.driverservice.dto.request.DriverRequest
-import com.software.modsen.driverservice.dto.response.DriverListResponse
-import com.software.modsen.driverservice.dto.response.DriverResponse
-import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
 import com.software.modsen.driverservice.exception.CarNotFoundException
 import com.software.modsen.driverservice.exception.DriverNotFoundException
 import com.software.modsen.driverservice.exception.EmailAlreadyExistException
 import com.software.modsen.driverservice.exception.PhoneAlreadyExistException
+import com.software.modsen.driverservice.kafka.producer.DriverProducer
 import com.software.modsen.driverservice.mapper.toDriver
-import com.software.modsen.driverservice.mapper.toDriverResponse
-import com.software.modsen.driverservice.mapper.toDriverWithCarResponse
 import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.model.Driver
 import com.software.modsen.driverservice.repository.CarRepository
@@ -23,26 +20,29 @@ import org.springframework.stereotype.Service
 @RequiredArgsConstructor
 class DriverService(
     private val driverRepository: DriverRepository,
-    private val carRepository: CarRepository
+    private val carRepository: CarRepository,
+    private val driverProducer: DriverProducer
 ) {
-    fun getDriverById(id: Long): DriverWithCarResponse = getByIdOrElseThrow(id).toDriverWithCarResponse()
+    fun getDriverById(id: Long): Driver = getByIdOrElseThrow(id)
 
-    fun getAllDrivers(): DriverListResponse =
-        DriverListResponse(driverRepository.findAll().map { it.toDriverResponse() })
+    fun getAllDrivers(): List<Driver> = driverRepository.findAll()
 
-    fun createDriver(driverRequest: DriverRequest): DriverResponse {
+    fun createDriver(driverRequest: DriverRequest): Driver {
         preCreateValidateDriver(driverRequest)
-        val driver: Driver = driverRequest.toDriver()
-        driver.car = getCarByIdOrElseThrow(driverRequest.carId)
-        return driverRepository.save(driver).toDriverResponse()
+        val newDriver: Driver = driverRequest.toDriver()
+        newDriver.car = getCarByIdOrElseThrow(driverRequest.carId)
+        val driver: Driver = driverRepository.save(newDriver)
+        val driverForRating = DriverForRating(driver.driverId!!)
+        driverProducer.sendDriver(driverForRating)
+        return driver
     }
 
-    fun updateDriver(id: Long, driverRequest: DriverRequest): DriverResponse {
+    fun updateDriver(id: Long, driverRequest: DriverRequest): Driver {
         val driverOptional: Driver = getByIdOrElseThrow(id)
         preUpdateValidateCar(driverRequest, driverOptional)
         val driver: Driver = driverRequest.toDriver()
         driver.driverId = id
-        return driverRepository.save(driver).toDriverResponse()
+        return driverRepository.save(driver)
     }
 
     fun deleteDriver(id: Long) = driverRepository.deleteById(id)

@@ -5,8 +5,8 @@ spring:
     name: driver-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: root
-    password: persik
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
     url: jdbc:postgresql://localhost:5432/driver_db
   jpa:
     show-sql: true
@@ -15,3 +15,21 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      bootstrap-servers: kafka:9092
+    properties:
+      retries: 3
+      linger.ms: 1
+      spring.json.add.type.headers: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
