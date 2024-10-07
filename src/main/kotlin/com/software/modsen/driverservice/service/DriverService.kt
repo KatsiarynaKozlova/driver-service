@@ -27,9 +27,9 @@ class DriverService(
 
     fun getAllDrivers(): List<Driver> = driverRepository.findAll()
 
-    fun createDriver(newDriver: Driver): Driver {
+    fun createDriver(carId: Long, newDriver: Driver): Driver {
         preCreateValidateDriver(newDriver)
-        newDriver.car = getCarByIdOrElseThrow(newDriver.car!!.carId!!)
+        newDriver.car = getCarByIdOrElseThrow(carId)
         val driver: Driver = driverRepository.save(newDriver)
         val driverForRating = DriverForRating(driver.driverId!!)
         driverProducer.sendDriver(driverForRating)

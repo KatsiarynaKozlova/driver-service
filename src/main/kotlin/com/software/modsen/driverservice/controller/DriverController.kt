@@ -7,7 +7,9 @@ import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
 import com.software.modsen.driverservice.mapper.toDriver
 import com.software.modsen.driverservice.mapper.toDriverResponse
 import com.software.modsen.driverservice.mapper.toDriverWithCarResponse
+import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.model.Driver
+import com.software.modsen.driverservice.service.CarService
 import com.software.modsen.driverservice.service.DriverService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -101,7 +103,7 @@ class DriverController(
     fun createDriver(@RequestBody driverRequest: DriverRequest): ResponseEntity<DriverResponse> {
         val newDriver: Driver = driverRequest.toDriver()
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(driverService.createDriver(newDriver).toDriverResponse())
+            .body(driverService.createDriver(driverRequest.carId, newDriver).toDriverResponse())
     }
 
     @PutMapping("/{id}")

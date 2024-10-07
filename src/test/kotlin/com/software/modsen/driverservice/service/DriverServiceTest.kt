@@ -77,7 +77,7 @@ class DriverServiceTest {
         every { driverRepository.save(any()) } returns newDriver
         every { driverProducer.sendDriver(any()) } just Runs
 
-        val result = driverService.createDriver(newDriver)
+        val result = driverService.createDriver(newDriver.car!!.carId!!, newDriver)
 
         assertEquals(newDriver, result)
         verify {
@@ -95,7 +95,7 @@ class DriverServiceTest {
         every { driverRepository.existsByPhone(any()) } returns true
 
         assertThrows<PhoneAlreadyExistException> {
-            driverService.createDriver(newDriver)
+            driverService.createDriver(newDriver.car!!.carId!!, newDriver)
         }
 
         verify { driverRepository.existsByPhone(newDriver.phone) }
@@ -109,7 +109,7 @@ class DriverServiceTest {
         every { driverRepository.existsByEmail(any()) } returns true
 
         assertThrows<EmailAlreadyExistException> {
-            driverService.createDriver(newDriver)
+            driverService.createDriver(newDriver.car!!.carId!!, newDriver)
         }
         verify {
             driverRepository.existsByPhone(newDriver.phone)
@@ -197,7 +197,7 @@ class DriverServiceTest {
             name = "alex",
             email = "email@mail.ru",
             phone = "1234567890",
-            sex = DriverSex.MEN,
+            sex = DriverSex.M,
             car = getDefaultCar()
         )
 
@@ -207,7 +207,7 @@ class DriverServiceTest {
             name = "Alex",
             email = "new_email@mail.ru",
             phone = "0987654321",
-            sex = DriverSex.MEN,
+            sex = DriverSex.M,
             car = getDefaultCar()
         )
 

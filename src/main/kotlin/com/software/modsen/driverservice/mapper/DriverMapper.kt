@@ -3,7 +3,9 @@ package com.software.modsen.driverservice.mapper
 import com.software.modsen.driverservice.dto.request.DriverRequest
 import com.software.modsen.driverservice.dto.response.DriverResponse
 import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
+import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.model.Driver
+import com.software.modsen.driverservice.model.DriverSex
 
 fun Driver.toDriverResponse(): DriverResponse {
     return DriverResponse(
@@ -32,7 +34,7 @@ fun DriverRequest.toDriver(): Driver {
         name,
         email,
         phone,
-        sex,
+        DriverSex.valueOf(sex),
         null
     )
 }
