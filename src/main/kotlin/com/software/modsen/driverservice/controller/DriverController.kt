@@ -4,8 +4,10 @@ import com.software.modsen.driverservice.dto.request.DriverRequest
 import com.software.modsen.driverservice.dto.response.DriverListResponse
 import com.software.modsen.driverservice.dto.response.DriverResponse
 import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
+import com.software.modsen.driverservice.mapper.toDriver
 import com.software.modsen.driverservice.mapper.toDriverResponse
 import com.software.modsen.driverservice.mapper.toDriverWithCarResponse
+import com.software.modsen.driverservice.model.Driver
 import com.software.modsen.driverservice.service.DriverService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -96,8 +98,11 @@ class DriverController(
             )
         ]
     )
-    fun createDriver(@RequestBody driverRequest: DriverRequest): ResponseEntity<DriverResponse> =
-        ResponseEntity.status(HttpStatus.CREATED).body(driverService.createDriver(driverRequest).toDriverResponse())
+    fun createDriver(@RequestBody driverRequest: DriverRequest): ResponseEntity<DriverResponse> {
+        val newDriver: Driver = driverRequest.toDriver()
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(driverService.createDriver(newDriver).toDriverResponse())
+    }
 
     @PutMapping("/{id}")
     @Operation(
@@ -132,8 +137,10 @@ class DriverController(
     fun updateDriver(
         @PathVariable id: Long,
         @RequestBody driverRequest: DriverRequest
-    ): ResponseEntity<DriverResponse> =
-        ResponseEntity.ok(driverService.updateDriver(id, driverRequest).toDriverResponse())
+    ): ResponseEntity<DriverResponse> {
+        val updatedDriver: Driver = driverRequest.toDriver()
+        return ResponseEntity.ok(driverService.updateDriver(id, updatedDriver).toDriverResponse())
+    }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")

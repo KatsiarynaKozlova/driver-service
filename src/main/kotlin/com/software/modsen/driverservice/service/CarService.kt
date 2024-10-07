@@ -19,17 +19,16 @@ class CarService(
 
     fun getAllCars(): List<Car> = carRepository.findAll()
 
-    fun createCar(carRequest: CarRequest): Car {
-        checkCarExist(carRequest.licensePlate)
-        return carRepository.save(carRequest.toCar())
+    fun createCar(newCar: Car): Car {
+        checkCarExist(newCar.licensePlate)
+        return carRepository.save(newCar)
     }
 
-    fun updateCar(id: Long, carRequest: CarRequest): Car {
+    fun updateCar(id: Long, updatedCar: Car): Car {
         val carOptional: Car = getByIdOrElseThrow(id)
-        validateCarUpdate(carRequest, carOptional)
-        val car: Car = carRequest.toCar()
-        car.carId = id
-        return carRepository.save(car)
+        validateCarUpdate(updatedCar, carOptional)
+        updatedCar.carId = id
+        return carRepository.save(updatedCar)
     }
 
     fun deleteCar(id: Long) = carRepository.deleteById(id)
@@ -43,9 +42,9 @@ class CarService(
         }
     }
 
-    private fun validateCarUpdate(carRequest: CarRequest, car: Car) {
-        if (!carRequest.licensePlate.equals(car.licensePlate)) {
-            checkCarExist(carRequest.licensePlate)
+    private fun validateCarUpdate(updatedCar: Car, car: Car) {
+        if (!updatedCar.licensePlate.equals(car.licensePlate)) {
+            checkCarExist(updatedCar.licensePlate)
         }
     }
 }
