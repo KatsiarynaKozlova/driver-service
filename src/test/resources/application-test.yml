@@ -1,12 +1,10 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/test_driver_db
-    driver-class-name: org.postgresql.Driver
-    username: ${POSTGRESQL_USERNAME}
-    password: ${POSTGRESQL_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
   liquibase:
     enabled: false
+  config:
+    activate:
+      on-profile: test

@@ -24,7 +24,7 @@ import org.springframework.web.servlet.function.RequestPredicates
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Import(DatabaseContainerConfiguration::class)
-class CarIntegrationTest {
+class CarControllerIntegrationTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -98,7 +98,7 @@ class CarIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     fun `should update car by id and return updated`() {
         val updatedCar = getDefaultUpdatedCarRequest()
         val defaultCar = getDefaultCarRequest()
@@ -165,9 +165,10 @@ class CarIntegrationTest {
             }
     }
 
-    private val DEFAULT_ID = 1L
-    private val DEFAULT_LICENSE_PLATE = "1234AB"
-
+    companion object {
+        private val DEFAULT_ID = 1L
+        private val DEFAULT_LICENSE_PLATE = "1234AB"
+    }
     private fun getDefaultCarRequest() =
         CarRequest(
             model = "Tesla Model S",
@@ -200,5 +201,4 @@ class CarIntegrationTest {
             licensePlate = "1234AB",
             color = "White"
         )
-    
 }
