@@ -1,6 +1,7 @@
 package com.software.modsen.driverservice.exception.handler
 
 import com.software.modsen.driverservice.exception.*
+import com.software.modsen.driverservice.exception.message.ErrorMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -13,14 +14,16 @@ class GlobalExceptionHandler {
         EmailAlreadyExistException::class,
         PhoneAlreadyExistException::class
     )
-    fun handlerCarAlreadyExistException(e: Exception): ResponseEntity<String> {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(e.message.toString())
+    fun handlerCarAlreadyExistException(e: RuntimeException): ResponseEntity<ErrorMessage> {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(ErrorMessage(e.message.toString()))
     }
 
     @ExceptionHandler(CarNotFoundException::class, DriverNotFoundException::class)
-    fun handlerCarNotFoundException(e: Exception): ResponseEntity<String> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(e.message.toString())
+    fun handlerCarNotFoundException(e: RuntimeException): ResponseEntity<ErrorMessage> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ErrorMessage(e.message.toString()))
     }
 }
