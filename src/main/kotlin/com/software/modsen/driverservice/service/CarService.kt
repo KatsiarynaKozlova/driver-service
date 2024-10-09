@@ -1,9 +1,7 @@
 package com.software.modsen.driverservice.service
 
-import com.software.modsen.driverservice.dto.request.CarRequest
 import com.software.modsen.driverservice.exception.CarAlreadyExistException
 import com.software.modsen.driverservice.exception.CarNotFoundException
-import com.software.modsen.driverservice.mapper.toCar
 import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.repository.CarRepository
 import com.software.modsen.driverservice.util.ExceptionMessages
