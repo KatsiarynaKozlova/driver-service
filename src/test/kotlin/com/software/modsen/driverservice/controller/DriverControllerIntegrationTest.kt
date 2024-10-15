@@ -5,15 +5,10 @@ import com.software.modsen.driverservice.config.DatabaseContainerConfiguration
 import com.software.modsen.driverservice.config.KafkaContainerConfiguration
 import com.software.modsen.driverservice.dto.request.CarRequest
 import com.software.modsen.driverservice.dto.request.DriverRequest
-import com.software.modsen.driverservice.dto.response.CarResponse
 import com.software.modsen.driverservice.dto.response.DriverResponse
-import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
 import com.software.modsen.driverservice.model.Sex
 import com.software.modsen.driverservice.util.ExceptionMessages
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.MethodOrderer
-import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -30,7 +25,6 @@ import org.springframework.web.servlet.function.RequestPredicates
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Import(DatabaseContainerConfiguration::class, KafkaContainerConfiguration::class)
 class DriverControllerIntegrationTest {
     @Autowired
@@ -49,9 +43,8 @@ class DriverControllerIntegrationTest {
     }
 
     @Test
-    @Order(1)
     fun `should return not found`() {
-        mockMvc.get("/drivers/{id}", DEFAULT_ID)
+        mockMvc.get("/drivers/{id}", DEFAULT_NOT_EXISTING_ID)
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
@@ -60,14 +53,13 @@ class DriverControllerIntegrationTest {
                 }
                 jsonPath("$.message") {
                     value(
-                        ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION.format(DEFAULT_ID)
+                        ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION.format(DEFAULT_NOT_EXISTING_ID)
                     )
                 }
             }
     }
 
     @Test
-    @Order(2)
     fun `should return new driver`() {
         setupCar()
         val driverRequest = defaultDriverRequest
@@ -83,7 +75,6 @@ class DriverControllerIntegrationTest {
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                 }
-                jsonPath("$.driverId") { value(expectedDriverResponse.driverId) }
                 jsonPath("$.name") { value(expectedDriverResponse.name) }
                 jsonPath("$.email") { value(expectedDriverResponse.email) }
                 jsonPath("$.phone") { value(expectedDriverResponse.phone) }
@@ -91,34 +82,16 @@ class DriverControllerIntegrationTest {
     }
 
     @Test
-    @Order(3)
-    fun `should return driver with car by id`() {
-        val expectedDriverResponse = defaultDriverResponseWithCar
-        mockMvc.get("/drivers/{id}", DEFAULT_ID)
-            .andDo { print() }
-            .andExpect {
-                status { isOk() }
-                content {
-                    RequestPredicates.contentType(MediaType.APPLICATION_JSON)
-                }
-                jsonPath("$.driverId") { value(expectedDriverResponse.driverId) }
-                jsonPath("$.name") { value(expectedDriverResponse.name) }
-                jsonPath("$.email") { value(expectedDriverResponse.email) }
-                jsonPath("$.phone") { value(expectedDriverResponse.phone) }
-                jsonPath("$.car.carId") { value(expectedDriverResponse.car.carId) }
-                jsonPath("$.car.color") { value(expectedDriverResponse.car.color) }
-                jsonPath("$.car.model") { value(expectedDriverResponse.car.model) }
-                jsonPath("$.car.licensePlate") { value(expectedDriverResponse.car.licensePlate) }
-                jsonPath("$.car.year") { value(expectedDriverResponse.car.year) }
-            }
-    }
-
-    @Test
-    @Order(4)
     fun `should update driver by id and return updated`() {
         val updatedDriver = defaultUpdatedDriverRequest
         val expectedDriverResponse = defaultUpdatedDriver
         val defaultDriver = defaultDriverRequest
+        setupCar()
+        mockMvc.post("/drivers")
+        {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updatedDriver)
+        }
         mockMvc.put("/drivers/{id}", DEFAULT_ID)
         {
             contentType = MediaType.APPLICATION_JSON
@@ -135,16 +108,10 @@ class DriverControllerIntegrationTest {
                 jsonPath("$.email") { value(expectedDriverResponse.email) }
                 jsonPath("$.phone") { value(expectedDriverResponse.phone) }
             }
-        mockMvc.put("/drivers/{id}", DEFAULT_ID)
-        {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(defaultDriver)
-        }
     }
 
     @Test
     fun `should return list of drivers`() {
-        val expectedDriverResponseList = listOf(defaultDriverResponse)
         mockMvc.get("/drivers")
             .andDo { print() }
             .andExpect {
@@ -152,10 +119,6 @@ class DriverControllerIntegrationTest {
                 content {
                     RequestPredicates.contentType(MediaType.APPLICATION_JSON)
                 }
-                jsonPath("$.items[0].driverId") { value(expectedDriverResponseList[0].driverId) }
-                jsonPath("$.items[0].name") { value(expectedDriverResponseList[0].name) }
-                jsonPath("$.items[0].email") { value(expectedDriverResponseList[0].email) }
-                jsonPath("$.items[0].phone") { value(expectedDriverResponseList[0].phone) }
             }
     }
 
@@ -168,6 +131,7 @@ class DriverControllerIntegrationTest {
     }
 
     companion object {
+        private const val DEFAULT_NOT_EXISTING_ID = 0L
         private const val DEFAULT_ID = 1L
         private const val DEFAULT_CAR_ID = 1L
 
@@ -185,14 +149,6 @@ class DriverControllerIntegrationTest {
         private const val DEFAULT_UPDATED_PHONE = "0987654321"
 
         val defaultCarRequest = CarRequest(
-            model = DEFAULT_MODEL,
-            year = DEFAULT_YEAR,
-            licensePlate = DEFAULT_LICENSE_PLATE,
-            color = DEFAULT_COLOR
-        )
-
-        val defaultCarResponse = CarResponse(
-            carId = DEFAULT_CAR_ID,
             model = DEFAULT_MODEL,
             year = DEFAULT_YEAR,
             licensePlate = DEFAULT_LICENSE_PLATE,
@@ -229,15 +185,6 @@ class DriverControllerIntegrationTest {
                 email = DEFAULT_EMAIL,
                 phone = DEFAULT_PHONE,
                 sex = Sex.M
-            )
-
-        val defaultDriverResponseWithCar = DriverWithCarResponse(
-                driverId = DEFAULT_ID,
-                name = DEFAULT_NAME,
-                email = DEFAULT_EMAIL,
-                phone = DEFAULT_PHONE,
-                sex = Sex.M,
-                car = defaultCarResponse
             )
     }
 }

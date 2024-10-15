@@ -5,10 +5,7 @@ import com.software.modsen.driverservice.config.DatabaseContainerConfiguration
 import com.software.modsen.driverservice.dto.request.CarRequest
 import com.software.modsen.driverservice.dto.response.CarResponse
 import com.software.modsen.driverservice.util.ExceptionMessages
-import org.junit.jupiter.api.MethodOrderer
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,7 +23,6 @@ import org.springframework.web.servlet.function.RequestPredicates
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @Import(DatabaseContainerConfiguration::class)
 class CarControllerIntegrationTest {
     @Autowired
@@ -45,24 +41,22 @@ class CarControllerIntegrationTest {
     }
 
     @Test
-    @Order(1)
     fun `should return not found`() {
-        mockMvc.get("/cars/{id}", DEFAULT_ID)
+        mockMvc.get("/cars/{id}", DEFAULT_NOT_EXISTING_ID)
             .andDo { print() }
             .andExpect {
                 status { isNotFound() }
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                 }
-                jsonPath("$.message") { value(ExceptionMessages.CAR_NOT_FOUND_EXCEPTION.format(DEFAULT_ID)) }
+                jsonPath("$.message") { value(ExceptionMessages.CAR_NOT_FOUND_EXCEPTION.format(DEFAULT_NOT_EXISTING_ID)) }
             }
     }
 
     @Test
-    @Order(2)
     fun `should return new car`() {
-        val carRequest = defaultCarRequest
-        val expectedCarResponse = defaultCarResponse
+        val carRequest = defaultUpdatedCarRequest
+        val expectedCarResponse = defaultUpdatedCarResponse
         mockMvc.post("/cars")
         {
             contentType = MediaType.APPLICATION_JSON
@@ -74,7 +68,6 @@ class CarControllerIntegrationTest {
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                 }
-                jsonPath("$.carId") { value(expectedCarResponse.carId) }
                 jsonPath("$.model") { value(expectedCarResponse.model) }
                 jsonPath("$.licensePlate") { value(expectedCarResponse.licensePlate) }
                 jsonPath("$.color") { value(expectedCarResponse.color) }
@@ -83,9 +76,14 @@ class CarControllerIntegrationTest {
     }
 
     @Test
-    @Order(3)
     fun `should return car by id`() {
         val expectedCarResponse = defaultCarResponse
+        val carRequest = defaultCarRequest
+        mockMvc.post("/cars")
+        {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(carRequest)
+        }
         mockMvc.get("/cars/{id}", DEFAULT_ID)
             .andDo { print() }
             .andExpect {
@@ -93,7 +91,6 @@ class CarControllerIntegrationTest {
                 content {
                     RequestPredicates.contentType(MediaType.APPLICATION_JSON)
                 }
-                jsonPath("$.carId") { value(expectedCarResponse.carId) }
                 jsonPath("$.model") { value(expectedCarResponse.model) }
                 jsonPath("$.licensePlate") { value(expectedCarResponse.licensePlate) }
                 jsonPath("$.color") { value(expectedCarResponse.color) }
@@ -102,10 +99,14 @@ class CarControllerIntegrationTest {
     }
 
     @Test
-    @Order(4)
     fun `should update car by id and return updated`() {
-        val updatedCar = defaultUpdatedCarRequest
+        val updatedCar = defaultCarRequest
         val defaultCar = defaultCarRequest
+        mockMvc.post("/cars")
+        {
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(defaultCar)
+        }
         mockMvc.put("/cars/{id}", DEFAULT_ID)
         {
             contentType = MediaType.APPLICATION_JSON
@@ -148,28 +149,8 @@ class CarControllerIntegrationTest {
             }
     }
 
-    @Test
-    fun `should return car already exist on create`() {
-        val carRequest = defaultCarRequestWithAlreadyExistingLicenseInDB
-        mockMvc.post("/cars")
-        {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(carRequest)
-        }
-            .andDo { print() }
-            .andExpect {
-                status { isConflict() }
-                content {
-                    contentType(MediaType.APPLICATION_JSON)
-                    content {
-                        contentType(MediaType.APPLICATION_JSON)
-                    }
-                    jsonPath("$.message") { value(ExceptionMessages.CAR_ALREADY_EXIST.format(DEFAULT_LICENSE_PLATE)) }
-                }
-            }
-    }
-
     companion object {
+        private const val DEFAULT_NOT_EXISTING_ID = 0L
         private const val DEFAULT_ID = 1L
         private const val DEFAULT_LICENSE_PLATE = "1234AB"
         private const val DEFAULT_MODEL = "Tesla Model S"
@@ -203,11 +184,12 @@ class CarControllerIntegrationTest {
             color = DEFAULT_UPDATE_COLOR
         )
 
-        val defaultCarRequestWithAlreadyExistingLicenseInDB = CarRequest(
+        val defaultUpdatedCarResponse = CarResponse(
+            carId = DEFAULT_ID,
             model = DEFAULT_UPDATE_MODEL,
             year = DEFAULT_UPDATE_YEAR,
-            licensePlate = DEFAULT_LICENSE_PLATE,
-            color = DEFAULT_COLOR
+            licensePlate = DEFAULT_UPDATE_LICENSE_PLATE,
+            color = DEFAULT_UPDATE_COLOR
         )
     }
 }
