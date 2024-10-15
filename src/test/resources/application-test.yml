@@ -18,3 +18,4 @@ spring:
       retries: 3
       linger.ms: 1
       spring.json.add.type.headers: false
+      
