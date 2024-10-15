@@ -8,7 +8,7 @@ import com.software.modsen.driverservice.dto.request.DriverRequest
 import com.software.modsen.driverservice.dto.response.CarResponse
 import com.software.modsen.driverservice.dto.response.DriverResponse
 import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
-import com.software.modsen.driverservice.model.DriverSex
+import com.software.modsen.driverservice.model.Sex
 import com.software.modsen.driverservice.util.ExceptionMessages
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Order
@@ -70,8 +70,8 @@ class DriverControllerIntegrationTest {
     @Order(2)
     fun `should return new driver`() {
         setupCar()
-        val driverRequest = getDefaultDriverRequest()
-        val expectedDriverResponse = getDefaultDriverResponse()
+        val driverRequest = defaultDriverRequest
+        val expectedDriverResponse = defaultDriverResponse
         mockMvc.post("/drivers")
         {
             contentType = MediaType.APPLICATION_JSON
@@ -93,7 +93,7 @@ class DriverControllerIntegrationTest {
     @Test
     @Order(3)
     fun `should return driver with car by id`() {
-        val expectedDriverResponse = getDefaultDriverResponseWithCar()
+        val expectedDriverResponse = defaultDriverResponseWithCar
         mockMvc.get("/drivers/{id}", DEFAULT_ID)
             .andDo { print() }
             .andExpect {
@@ -116,9 +116,9 @@ class DriverControllerIntegrationTest {
     @Test
     @Order(4)
     fun `should update driver by id and return updated`() {
-        val updatedDriver = getDefaultUpdatedDriverRequest()
-        val expectedDriverResponse = getDefaultUpdatedDriver()
-        val defaultDriver = getDefaultDriverRequest()
+        val updatedDriver = defaultUpdatedDriverRequest
+        val expectedDriverResponse = defaultUpdatedDriver
+        val defaultDriver = defaultDriverRequest
         mockMvc.put("/drivers/{id}", DEFAULT_ID)
         {
             contentType = MediaType.APPLICATION_JSON
@@ -144,7 +144,7 @@ class DriverControllerIntegrationTest {
 
     @Test
     fun `should return list of drivers`() {
-        val expectedDriverResponseList = listOf(getDefaultDriverResponse())
+        val expectedDriverResponseList = listOf(defaultDriverResponse)
         mockMvc.get("/drivers")
             .andDo { print() }
             .andExpect {
@@ -163,75 +163,81 @@ class DriverControllerIntegrationTest {
         mockMvc.post("/cars")
         {
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(getDefaultCarRequest())
+            content = objectMapper.writeValueAsString(defaultCarRequest)
         }
     }
 
     companion object {
-        private val DEFAULT_ID = 1L
-        private val DEFAULT_CAR_ID = 1L
+        private const val DEFAULT_ID = 1L
+        private const val DEFAULT_CAR_ID = 1L
+
+        private const val DEFAULT_LICENSE_PLATE = "1234AB"
+        private const val DEFAULT_MODEL = "Tesla Model S"
+        private const val DEFAULT_YEAR = 2022
+        private const val DEFAULT_COLOR = "Black"
+
+        private const val DEFAULT_NAME = "Igor"
+        private const val DEFAULT_EMAIL = "uralskipelmen@mail.ru"
+        private const val DEFAULT_PHONE = "1234567890"
+        private const val DEFAULT_SEX = "M"
+
+        private const val DEFAULT_UPDATED_EMAIL = "comedy@mail.ru"
+        private const val DEFAULT_UPDATED_PHONE = "0987654321"
+
+        val defaultCarRequest = CarRequest(
+            model = DEFAULT_MODEL,
+            year = DEFAULT_YEAR,
+            licensePlate = DEFAULT_LICENSE_PLATE,
+            color = DEFAULT_COLOR
+        )
+
+        val defaultCarResponse = CarResponse(
+            carId = DEFAULT_CAR_ID,
+            model = DEFAULT_MODEL,
+            year = DEFAULT_YEAR,
+            licensePlate = DEFAULT_LICENSE_PLATE,
+            color = DEFAULT_COLOR
+        )
+
+        val defaultUpdatedDriver = DriverResponse(
+                driverId = DEFAULT_ID,
+                name = DEFAULT_NAME,
+                email = DEFAULT_UPDATED_EMAIL,
+                phone = DEFAULT_UPDATED_PHONE,
+                sex = Sex.M
+            )
+
+        val defaultDriverRequest = DriverRequest(
+                name = DEFAULT_NAME,
+                email = DEFAULT_EMAIL,
+                phone = DEFAULT_PHONE,
+                sex = DEFAULT_SEX,
+                carId = DEFAULT_CAR_ID
+            )
+
+        val defaultUpdatedDriverRequest = DriverRequest(
+                name = DEFAULT_NAME,
+                email = DEFAULT_UPDATED_EMAIL,
+                phone = DEFAULT_UPDATED_PHONE,
+                sex = DEFAULT_SEX,
+                carId = DEFAULT_CAR_ID
+            )
+
+        val defaultDriverResponse = DriverResponse(
+                driverId = DEFAULT_ID,
+                name = DEFAULT_NAME,
+                email = DEFAULT_EMAIL,
+                phone = DEFAULT_PHONE,
+                sex = Sex.M
+            )
+
+        val defaultDriverResponseWithCar = DriverWithCarResponse(
+                driverId = DEFAULT_ID,
+                name = DEFAULT_NAME,
+                email = DEFAULT_EMAIL,
+                phone = DEFAULT_PHONE,
+                sex = Sex.M,
+                car = defaultCarResponse
+            )
     }
-
-    private fun getDefaultCarRequest() =
-        CarRequest(
-            model = "Tesla Model S",
-            year = 2022,
-            licensePlate = "1234AB",
-            color = "Black"
-        )
-
-    private fun getDefaultCarResponse() =
-        CarResponse(
-            carId = 1L,
-            model = "Tesla Model S",
-            year = 2022,
-            licensePlate = "1234AB",
-            color = "Black"
-        )
-
-    private fun getDefaultUpdatedDriver() =
-        DriverResponse(
-            driverId = 1L,
-            name = "Igor",
-            email = "comedy@mail.ru",
-            phone = "0987654321",
-            sex = DriverSex.M
-        )
-
-    private fun getDefaultDriverRequest() =
-        DriverRequest(
-            name = "Igor",
-            email = "uralskipelmen@mail.ru",
-            phone = "1234567890",
-            sex = "M",
-            carId = DEFAULT_CAR_ID
-        )
-
-    private fun getDefaultUpdatedDriverRequest() =
-        DriverRequest(
-            name = "Igor",
-            email = "comedy@mail.ru",
-            phone = "0987654321",
-            sex = "M",
-            carId = DEFAULT_CAR_ID
-        )
-
-    private fun getDefaultDriverResponse() =
-        DriverResponse(
-            driverId = DEFAULT_ID,
-            name = "Igor",
-            email = "uralskipelmen@mail.ru",
-            phone = "1234567890",
-            sex = DriverSex.M
-        )
-
-    private fun getDefaultDriverResponseWithCar() =
-        DriverWithCarResponse(
-            driverId = DEFAULT_ID,
-            name = "Igor",
-            email = "uralskipelmen@mail.ru",
-            phone = "1234567890",
-            sex = DriverSex.M,
-            car = getDefaultCarResponse()
-        )
 }

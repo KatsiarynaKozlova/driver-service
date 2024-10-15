@@ -15,7 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.*
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.put
+import org.springframework.test.web.servlet.post
 import org.springframework.web.servlet.function.RequestPredicates
 
 
@@ -57,8 +61,8 @@ class CarControllerIntegrationTest {
     @Test
     @Order(2)
     fun `should return new car`() {
-        val carRequest = getDefaultCarRequest()
-        val expectedCarResponse = getDefaultCarResponse()
+        val carRequest = defaultCarRequest
+        val expectedCarResponse = defaultCarResponse
         mockMvc.post("/cars")
         {
             contentType = MediaType.APPLICATION_JSON
@@ -81,7 +85,7 @@ class CarControllerIntegrationTest {
     @Test
     @Order(3)
     fun `should return car by id`() {
-        val expectedCarResponse = getDefaultCarResponse()
+        val expectedCarResponse = defaultCarResponse
         mockMvc.get("/cars/{id}", DEFAULT_ID)
             .andDo { print() }
             .andExpect {
@@ -100,8 +104,8 @@ class CarControllerIntegrationTest {
     @Test
     @Order(4)
     fun `should update car by id and return updated`() {
-        val updatedCar = getDefaultUpdatedCarRequest()
-        val defaultCar = getDefaultCarRequest()
+        val updatedCar = defaultUpdatedCarRequest
+        val defaultCar = defaultCarRequest
         mockMvc.put("/cars/{id}", DEFAULT_ID)
         {
             contentType = MediaType.APPLICATION_JSON
@@ -128,7 +132,7 @@ class CarControllerIntegrationTest {
 
     @Test
     fun `should return list of cars`() {
-        val expectedCarResponseList = listOf(getDefaultCarResponse())
+        val expectedCarResponseList = listOf(defaultCarResponse)
         mockMvc.get("/cars")
             .andDo { print() }
             .andExpect {
@@ -146,7 +150,7 @@ class CarControllerIntegrationTest {
 
     @Test
     fun `should return car already exist on create`() {
-        val carRequest = getDefaultCarRequestWithAlreadyExistingLicenseInDB()
+        val carRequest = defaultCarRequestWithAlreadyExistingLicenseInDB
         mockMvc.post("/cars")
         {
             contentType = MediaType.APPLICATION_JSON
@@ -166,39 +170,44 @@ class CarControllerIntegrationTest {
     }
 
     companion object {
-        private val DEFAULT_ID = 1L
-        private val DEFAULT_LICENSE_PLATE = "1234AB"
+        private const val DEFAULT_ID = 1L
+        private const val DEFAULT_LICENSE_PLATE = "1234AB"
+        private const val DEFAULT_MODEL = "Tesla Model S"
+        private const val DEFAULT_YEAR = 2022
+        private const val DEFAULT_COLOR = "Black"
+
+        private const val DEFAULT_UPDATE_LICENSE_PLATE = "5678BB"
+        private const val DEFAULT_UPDATE_MODEL = "Tesla Model A"
+        private const val DEFAULT_UPDATE_YEAR = 2023
+        private const val DEFAULT_UPDATE_COLOR = "White"
+
+        val defaultCarRequest = CarRequest(
+            model = DEFAULT_MODEL,
+            year = DEFAULT_YEAR,
+            licensePlate = DEFAULT_LICENSE_PLATE,
+            color = DEFAULT_COLOR
+        )
+
+        val defaultCarResponse = CarResponse(
+            carId = DEFAULT_ID,
+            model = DEFAULT_MODEL,
+            year = DEFAULT_YEAR,
+            licensePlate = DEFAULT_LICENSE_PLATE,
+            color = DEFAULT_COLOR
+        )
+
+        val defaultUpdatedCarRequest = CarRequest(
+            model = DEFAULT_UPDATE_MODEL,
+            year = DEFAULT_UPDATE_YEAR,
+            licensePlate = DEFAULT_UPDATE_LICENSE_PLATE,
+            color = DEFAULT_UPDATE_COLOR
+        )
+
+        val defaultCarRequestWithAlreadyExistingLicenseInDB = CarRequest(
+            model = DEFAULT_UPDATE_MODEL,
+            year = DEFAULT_UPDATE_YEAR,
+            licensePlate = DEFAULT_LICENSE_PLATE,
+            color = DEFAULT_COLOR
+        )
     }
-    private fun getDefaultCarRequest() =
-        CarRequest(
-            model = "Tesla Model S",
-            year = 2022,
-            licensePlate = "1234AB",
-            color = "Black"
-        )
-
-    private fun getDefaultCarResponse() =
-        CarResponse(
-            carId = 1L,
-            model = "Tesla Model S",
-            year = 2022,
-            licensePlate = "1234AB",
-            color = "Black"
-        )
-
-    private fun getDefaultUpdatedCarRequest() =
-        CarRequest(
-            model = "Tesla Model A",
-            year = 2023,
-            licensePlate = "5678BB",
-            color = "White"
-        )
-
-    private fun getDefaultCarRequestWithAlreadyExistingLicenseInDB() =
-        CarRequest(
-            model = "Tesla Model A",
-            year = 2020,
-            licensePlate = "1234AB",
-            color = "White"
-        )
 }

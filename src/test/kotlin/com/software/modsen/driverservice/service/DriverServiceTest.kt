@@ -7,7 +7,7 @@ import com.software.modsen.driverservice.exception.PhoneAlreadyExistException
 import com.software.modsen.driverservice.kafka.producer.DriverProducer
 import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.model.Driver
-import com.software.modsen.driverservice.model.DriverSex
+import com.software.modsen.driverservice.model.Sex
 import com.software.modsen.driverservice.repository.CarRepository
 import com.software.modsen.driverservice.repository.DriverRepository
 import io.mockk.Runs
@@ -197,7 +197,7 @@ class DriverServiceTest {
             name = "alex",
             email = "email@mail.ru",
             phone = "1234567890",
-            sex = DriverSex.M,
+            sex = Sex.M,
             car = getDefaultCar()
         )
 
@@ -207,7 +207,7 @@ class DriverServiceTest {
             name = "Alex",
             email = "new_email@mail.ru",
             phone = "0987654321",
-            sex = DriverSex.M,
+            sex = Sex.M,
             car = getDefaultCar()
         )
 

@@ -19,7 +19,7 @@ data class Driver(
     var phone: String,
     @Column(name = "sex")
     @Enumerated(EnumType.STRING)
-    var sex: DriverSex,
+    var sex: Sex,
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_id")
     var car: Car?,
