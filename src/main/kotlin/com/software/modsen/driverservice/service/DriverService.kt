@@ -27,22 +27,20 @@ class DriverService(
 
     fun getAllDrivers(): List<Driver> = driverRepository.findAll()
 
-    fun createDriver(driverRequest: DriverRequest): Driver {
-        preCreateValidateDriver(driverRequest)
-        val newDriver: Driver = driverRequest.toDriver()
-        newDriver.car = getCarByIdOrElseThrow(driverRequest.carId)
+    fun createDriver(carId: Long, newDriver: Driver): Driver {
+        preCreateValidateDriver(newDriver)
+        newDriver.car = getCarByIdOrElseThrow(carId)
         val driver: Driver = driverRepository.save(newDriver)
         val driverForRating = DriverForRating(driver.driverId!!)
         driverProducer.sendDriver(driverForRating)
         return driver
     }
 
-    fun updateDriver(id: Long, driverRequest: DriverRequest): Driver {
+    fun updateDriver(id: Long, updatedDriver: Driver): Driver {
         val driverOptional: Driver = getByIdOrElseThrow(id)
-        preUpdateValidateCar(driverRequest, driverOptional)
-        val driver: Driver = driverRequest.toDriver()
-        driver.driverId = id
-        return driverRepository.save(driver)
+        preUpdateValidateCar(updatedDriver, driverOptional)
+        updatedDriver.driverId = id
+        return driverRepository.save(updatedDriver)
     }
 
     fun deleteDriver(id: Long) = driverRepository.deleteById(id)
@@ -62,12 +60,12 @@ class DriverService(
         }
     }
 
-    private fun preCreateValidateDriver(driverRequest: DriverRequest) {
-        checkPhoneExist(driverRequest.phone)
-        checkEmailExist(driverRequest.email)
+    private fun preCreateValidateDriver(driver: Driver) {
+        checkPhoneExist(driver.phone)
+        checkEmailExist(driver.email)
     }
 
-    private fun preUpdateValidateCar(driverRequest: DriverRequest, driver: Driver) {
+    private fun preUpdateValidateCar(driverRequest: Driver, driver: Driver) {
         if (!driver.email.equals(driverRequest.email)) {
             checkEmailExist(driverRequest.email)
         }

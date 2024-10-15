@@ -3,7 +3,9 @@ package com.software.modsen.driverservice.controller
 import com.software.modsen.driverservice.dto.request.CarRequest
 import com.software.modsen.driverservice.dto.response.CarListResponse
 import com.software.modsen.driverservice.dto.response.CarResponse
+import com.software.modsen.driverservice.mapper.toCar
 import com.software.modsen.driverservice.mapper.toCarResponse
+import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.service.CarService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -96,8 +98,10 @@ class CarController(
             )
         ]
     )
-    fun createCar(@RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> =
-        ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carRequest).toCarResponse())
+    fun createCar(@RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
+        val newCar: Car = carRequest.toCar()
+        return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(newCar).toCarResponse())
+    }
 
     @PutMapping("/{id}")
     @Operation(
@@ -129,8 +133,10 @@ class CarController(
             )
         ]
     )
-    fun updateCar(@PathVariable id: Long, @RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> =
-        ResponseEntity.ok(carService.updateCar(id, carRequest).toCarResponse())
+    fun updateCar(@PathVariable id: Long, @RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
+        val updatedCar: Car = carRequest.toCar()
+        return ResponseEntity.ok(carService.updateCar(id, updatedCar).toCarResponse())
+    }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")

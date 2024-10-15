@@ -6,11 +6,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter
+import lombok.Setter
 import org.hibernate.annotations.SQLDelete
 
 @Entity
 @Table(name = "cars")
 @SQLDelete(sql = "UPDATE cars SET is_deleted = true WHERE car_id=?")
+@Getter
+@Setter
 data class Car(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
