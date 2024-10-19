@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  liquibase:
+    enabled: false
+  config:
+    activate:
+      on-profile: test
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+    bootstrap-servers: localhost:9092
+    properties:
+      retries: 3
+      linger.ms: 1
+      spring.json.add.type.headers: false
+      

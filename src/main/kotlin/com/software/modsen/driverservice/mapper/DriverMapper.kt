@@ -4,6 +4,7 @@ import com.software.modsen.driverservice.dto.request.DriverRequest
 import com.software.modsen.driverservice.dto.response.DriverResponse
 import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
 import com.software.modsen.driverservice.model.Driver
+import com.software.modsen.driverservice.model.Sex
 
 fun Driver.toDriverResponse(): DriverResponse {
     return DriverResponse(
@@ -32,7 +33,7 @@ fun DriverRequest.toDriver(): Driver {
         name,
         email,
         phone,
-        sex,
+        Sex.valueOf(sex),
         null
     )
 }
