@@ -5,6 +5,8 @@ import com.software.modsen.driverservice.exception.CarNotFoundException
 import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.repository.CarRepository
 import com.software.modsen.driverservice.util.ExceptionMessages
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
@@ -13,35 +15,35 @@ import org.springframework.stereotype.Service
 class CarService(
     private val carRepository: CarRepository
 ) {
-    fun getCarById(id: Long): Car = getByIdOrElseThrow(id)
+    suspend fun getCarById(id: Long): Car = getByIdOrElseThrow(id)
 
-    fun getAllCars(): List<Car> = carRepository.findAll()
+    suspend fun getAllCars(): List<Car> = withContext(Dispatchers.IO) { carRepository.findAll() }
 
-    fun createCar(newCar: Car): Car {
+    suspend fun createCar(newCar: Car): Car = withContext(Dispatchers.IO) {
         checkCarExist(newCar.licensePlate)
-        return carRepository.save(newCar)
+        carRepository.save(newCar)
     }
 
-    fun updateCar(id: Long, updatedCar: Car): Car {
+    suspend fun updateCar(id: Long, updatedCar: Car): Car = withContext(Dispatchers.IO) {
         val carOptional: Car = getByIdOrElseThrow(id)
         validateCarUpdate(updatedCar, carOptional)
         updatedCar.carId = id
-        return carRepository.save(updatedCar)
+        carRepository.save(updatedCar)
     }
 
-    fun deleteCar(id: Long) = carRepository.deleteById(id)
+    suspend fun deleteCar(id: Long) = withContext(Dispatchers.IO) { carRepository.deleteById(id) }
 
-    private fun getByIdOrElseThrow(id: Long): Car = carRepository.findById(id)
+    private suspend fun getByIdOrElseThrow(id: Long): Car = carRepository.findById(id)
         .orElseThrow { CarNotFoundException(ExceptionMessages.CAR_NOT_FOUND_EXCEPTION.format(id)) }
 
-    private fun checkCarExist(licensePlate: String) {
+    private suspend fun checkCarExist(licensePlate: String) {
         if (carRepository.existsByLicensePlate(licensePlate)) {
             throw CarAlreadyExistException(ExceptionMessages.CAR_ALREADY_EXIST.format(licensePlate))
         }
     }
 
-    private fun validateCarUpdate(updatedCar: Car, car: Car) {
-        if (!updatedCar.licensePlate.equals(car.licensePlate)) {
+    private suspend fun validateCarUpdate(updatedCar: Car, car: Car) {
+        if (updatedCar.licensePlate != car.licensePlate) {
             checkCarExist(updatedCar.licensePlate)
         }
     }
