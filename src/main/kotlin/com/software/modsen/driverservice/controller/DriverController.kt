@@ -73,7 +73,7 @@ class DriverController(
         ]
     )
     suspend fun getAllDrivers(): ResponseEntity<DriverListResponse> =
-        ResponseEntity.ok(DriverListResponse(driverService.getAllDrivers().map { it.toDriverResponse() }.toList()))
+        ResponseEntity.ok(DriverListResponse(driverService.getAllDrivers().map { it.toDriverResponse() }))
 
     @PostMapping
     @Operation(

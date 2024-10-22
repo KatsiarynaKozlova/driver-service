@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 class CarService(
     private val carRepository: CarRepository
 ) {
-    suspend fun getCarById(id: Long): Car = getByIdOrElseThrow(id)
+    suspend fun getCarById(id: Long): Car = withContext(Dispatchers.IO) { getByIdOrElseThrow(id) }
 
     suspend fun getAllCars(): List<Car> = withContext(Dispatchers.IO) { carRepository.findAll() }
 

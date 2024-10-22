@@ -71,7 +71,7 @@ class CarController(
         ]
     )
     suspend fun getAllCars(): ResponseEntity<CarListResponse> =
-        ResponseEntity.ok(CarListResponse(carService.getAllCars().map { it.toCarResponse() }.toList()))
+        ResponseEntity.ok(CarListResponse(carService.getAllCars().map { it.toCarResponse() }))
 
     @PostMapping
     @Operation(
