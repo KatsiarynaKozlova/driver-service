@@ -7,7 +7,7 @@ databaseChangeLog:
             tableName: drivers
             columns:
               - column:
-                  name: driver_id
+                  name: id
                   type: bigint
                   autoIncrement: true
                   constraints:
