@@ -15,29 +15,31 @@ import org.springframework.stereotype.Service
 class CarService(
     private val carRepository: CarRepository
 ) {
-    suspend fun getCarById(id: Long): Car = withContext(Dispatchers.IO) { getByIdOrElseThrow(id) }
+    suspend fun getCarById(id: Long): Car = getByIdOrElseThrow(id)
 
     suspend fun getAllCars(): List<Car> = withContext(Dispatchers.IO) { carRepository.findAll() }
 
-    suspend fun createCar(newCar: Car): Car = withContext(Dispatchers.IO) {
+    suspend fun createCar(newCar: Car): Car {
         checkCarExist(newCar.licensePlate)
-        carRepository.save(newCar)
+        return withContext(Dispatchers.IO) { carRepository.save(newCar) }
     }
 
-    suspend fun updateCar(id: Long, updatedCar: Car): Car = withContext(Dispatchers.IO) {
+    suspend fun updateCar(id: Long, updatedCar: Car): Car {
         val carOptional: Car = getByIdOrElseThrow(id)
         validateCarUpdate(updatedCar, carOptional)
         updatedCar.carId = id
-        carRepository.save(updatedCar)
+        return withContext(Dispatchers.IO) { carRepository.save(updatedCar) }
     }
 
     suspend fun deleteCar(id: Long) = withContext(Dispatchers.IO) { carRepository.deleteById(id) }
 
-    private suspend fun getByIdOrElseThrow(id: Long): Car = carRepository.findById(id)
-        .orElseThrow { CarNotFoundException(ExceptionMessages.CAR_NOT_FOUND_EXCEPTION.format(id)) }
+    private suspend fun getByIdOrElseThrow(id: Long): Car = withContext(Dispatchers.IO) {
+        carRepository.findById(id)
+            .orElseThrow { CarNotFoundException(ExceptionMessages.CAR_NOT_FOUND_EXCEPTION.format(id)) }
+    }
 
     private suspend fun checkCarExist(licensePlate: String) {
-        if (carRepository.existsByLicensePlate(licensePlate)) {
+        if (withContext(Dispatchers.IO) { carRepository.existsByLicensePlate(licensePlate) }) {
             throw CarAlreadyExistException(ExceptionMessages.CAR_ALREADY_EXIST.format(licensePlate))
         }
     }

@@ -8,4 +8,5 @@ object ExceptionMessages {
     const val DRIVER_WITH_PHONE_ALREADY_EXIST_EXCEPTION: String =
         "driver with phone '%s' already exists"
     const val CAR_ALREADY_EXIST: String = "car with number '%s' already exists"
+    const val SERVICE_UNAVAILABLE = "Service unavailable. Try again later"
 }
