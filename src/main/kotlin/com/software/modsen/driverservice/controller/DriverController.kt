@@ -7,9 +7,7 @@ import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
 import com.software.modsen.driverservice.mapper.toDriver
 import com.software.modsen.driverservice.mapper.toDriverResponse
 import com.software.modsen.driverservice.mapper.toDriverWithCarResponse
-import com.software.modsen.driverservice.model.Car
 import com.software.modsen.driverservice.model.Driver
-import com.software.modsen.driverservice.service.CarService
 import com.software.modsen.driverservice.service.DriverService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -17,6 +15,8 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -58,7 +58,7 @@ class DriverController(
             )
         ]
     )
-    fun gerDriverById(@PathVariable id: Long): ResponseEntity<DriverWithCarResponse> =
+    suspend fun gerDriverById(@PathVariable id: Long): ResponseEntity<DriverWithCarResponse> =
         ResponseEntity.ok(driverService.getDriverById(id).toDriverWithCarResponse())
 
     @GetMapping
@@ -72,7 +72,7 @@ class DriverController(
             )
         ]
     )
-    fun getAllDrivers(): ResponseEntity<DriverListResponse> =
+    suspend fun getAllDrivers(): ResponseEntity<DriverListResponse> =
         ResponseEntity.ok(DriverListResponse(driverService.getAllDrivers().map { it.toDriverResponse() }))
 
     @PostMapping
@@ -100,7 +100,7 @@ class DriverController(
             )
         ]
     )
-    fun createDriver(@RequestBody driverRequest: DriverRequest): ResponseEntity<DriverResponse> {
+    suspend fun createDriver(@RequestBody driverRequest: DriverRequest): ResponseEntity<DriverResponse> {
         val newDriver: Driver = driverRequest.toDriver()
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(driverService.createDriver(driverRequest.carId, newDriver).toDriverResponse())
@@ -136,7 +136,7 @@ class DriverController(
             )
         ]
     )
-    fun updateDriver(
+    suspend fun updateDriver(
         @PathVariable id: Long,
         @RequestBody driverRequest: DriverRequest
     ): ResponseEntity<DriverResponse> {
@@ -161,5 +161,5 @@ class DriverController(
             )
         ]
     )
-    fun deleteDriver(@PathVariable id: Long) = driverService.deleteDriver(id)
+    suspend fun deleteDriver(@PathVariable id: Long) = driverService.deleteDriver(id)
 }

@@ -56,7 +56,7 @@ class CarController(
             )
         ]
     )
-    fun getCarById(@PathVariable id: Long): ResponseEntity<CarResponse> =
+    suspend fun getCarById(@PathVariable id: Long): ResponseEntity<CarResponse> =
         ResponseEntity.ok(carService.getCarById(id).toCarResponse())
 
     @GetMapping
@@ -70,7 +70,7 @@ class CarController(
             )
         ]
     )
-    fun getAllCars(): ResponseEntity<CarListResponse> =
+    suspend fun getAllCars(): ResponseEntity<CarListResponse> =
         ResponseEntity.ok(CarListResponse(carService.getAllCars().map { it.toCarResponse() }))
 
     @PostMapping
@@ -98,7 +98,7 @@ class CarController(
             )
         ]
     )
-    fun createCar(@RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
+    suspend fun createCar(@RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
         val newCar: Car = carRequest.toCar()
         return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(newCar).toCarResponse())
     }
@@ -133,7 +133,7 @@ class CarController(
             )
         ]
     )
-    fun updateCar(@PathVariable id: Long, @RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
+    suspend fun updateCar(@PathVariable id: Long, @RequestBody carRequest: CarRequest): ResponseEntity<CarResponse> {
         val updatedCar: Car = carRequest.toCar()
         return ResponseEntity.ok(carService.updateCar(id, updatedCar).toCarResponse())
     }
@@ -155,5 +155,5 @@ class CarController(
             )
         ]
     )
-    fun deleteCar(@PathVariable id: Long) = carService.deleteCar(id)
+    suspend fun deleteCar(@PathVariable id: Long) = carService.deleteCar(id)
 }

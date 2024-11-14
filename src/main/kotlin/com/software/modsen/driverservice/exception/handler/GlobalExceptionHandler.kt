@@ -26,4 +26,11 @@ class GlobalExceptionHandler {
             .status(HttpStatus.NOT_FOUND)
             .body(ErrorMessage(e.message.toString()))
     }
+
+    @ExceptionHandler(ServiceUnAvailableException::class)
+    fun handlerServiceUnAvailableException(e: RuntimeException): ResponseEntity<ErrorMessage> {
+        return ResponseEntity
+            .status(HttpStatus.BAD_GATEWAY)
+            .body(ErrorMessage(e.message.toString()))
+    }
 }
