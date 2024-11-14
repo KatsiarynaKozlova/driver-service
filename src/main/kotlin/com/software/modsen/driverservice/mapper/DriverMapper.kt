@@ -9,7 +9,7 @@ import com.software.modsen.driverservice.model.Sex
 
 fun Driver.toDriverResponse(): DriverResponse {
     return DriverResponse(
-        id,
+        id!!,
         name,
         email,
         phone,
@@ -19,7 +19,7 @@ fun Driver.toDriverResponse(): DriverResponse {
 
 fun Driver.toDriverWithCarResponse(): DriverWithCarResponse {
     return DriverWithCarResponse(
-        id,
+        id!!,
         name,
         email,
         phone,

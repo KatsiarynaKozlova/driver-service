@@ -4,6 +4,7 @@ import com.software.modsen.driverservice.exception.*
 import com.software.modsen.driverservice.exception.message.ErrorMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -31,6 +32,13 @@ class GlobalExceptionHandler {
     fun handlerServiceUnAvailableException(e: RuntimeException): ResponseEntity<ErrorMessage> {
         return ResponseEntity
             .status(HttpStatus.BAD_GATEWAY)
+            .body(ErrorMessage(e.message.toString()))
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException): ResponseEntity<ErrorMessage> {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
             .body(ErrorMessage(e.message.toString()))
     }
 }

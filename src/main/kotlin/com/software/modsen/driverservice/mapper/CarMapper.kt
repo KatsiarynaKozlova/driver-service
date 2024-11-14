@@ -6,7 +6,7 @@ import com.software.modsen.driverservice.model.Car
 
 fun Car.toCarResponse(): CarResponse {
     return CarResponse(
-        carId,
+        carId!!,
         color,
         model,
         licensePlate,
