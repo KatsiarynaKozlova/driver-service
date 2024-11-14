@@ -1,6 +1,11 @@
 package com.software.modsen.driverservice.exception.handler
 
-import com.software.modsen.driverservice.exception.*
+import com.software.modsen.driverservice.exception.CarAlreadyExistException
+import com.software.modsen.driverservice.exception.CarNotFoundException
+import com.software.modsen.driverservice.exception.DriverNotFoundException
+import com.software.modsen.driverservice.exception.EmailAlreadyExistException
+import com.software.modsen.driverservice.exception.PhoneAlreadyExistException
+import com.software.modsen.driverservice.exception.ServiceUnAvailableException
 import com.software.modsen.driverservice.exception.message.ErrorMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
