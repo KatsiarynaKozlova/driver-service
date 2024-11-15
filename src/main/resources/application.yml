@@ -32,8 +32,8 @@ spring:
           issuer-uri: http://localhost:8100/realms/cab-aggregator-realm
           jwk-set-uri: http://localhost:8100/realms/cab-aggregator-realm/protocol/openid-connect/certs
 eureka:
- # instance:
-   # hostname: driver-service
+  instance:
+    hostname: driver-service
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
