@@ -6,6 +6,6 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY --from=build-pass-serv /app/target/driver-service-0.0.1-SNAPSHOT.jar /app/driver-service-0.0.1-SNAPSHOT.jar.jar
+COPY --from=build-pass-serv /app/target/driver-service-0.0.1-SNAPSHOT.jar /app/driver-service-0.0.1-SNAPSHOT.jar
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "/app/driver-service-0.0.1-SNAPSHOT.jar.jar"]
+ENTRYPOINT ["java", "-jar", "/app/driver-service-0.0.1-SNAPSHOT.jar"]

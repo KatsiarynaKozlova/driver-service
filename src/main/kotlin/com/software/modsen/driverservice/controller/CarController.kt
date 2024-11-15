@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 class CarController(
     private val carService: CarService
 ) {
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @GetMapping("/{id}")
     @Operation(
         description = "Get Car by ID ",
@@ -59,6 +61,7 @@ class CarController(
     suspend fun getCarById(@PathVariable id: Long): ResponseEntity<CarResponse> =
         ResponseEntity.ok(carService.getCarById(id).toCarResponse())
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     @Operation(description = "Get list of all Cars")
     @ApiResponse(
@@ -73,6 +76,7 @@ class CarController(
     suspend fun getAllCars(): ResponseEntity<CarListResponse> =
         ResponseEntity.ok(CarListResponse(carService.getAllCars().map { it.toCarResponse() }))
 
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @PostMapping
     @Operation(
         description = "Create Car",
@@ -103,6 +107,7 @@ class CarController(
         return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(newCar).toCarResponse())
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @PutMapping("/{id}")
     @Operation(
         description = "Update Car",
@@ -138,6 +143,7 @@ class CarController(
         return ResponseEntity.ok(carService.updateCar(id, updatedCar).toCarResponse())
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(

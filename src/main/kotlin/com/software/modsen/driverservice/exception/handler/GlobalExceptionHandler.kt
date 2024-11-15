@@ -1,9 +1,15 @@
 package com.software.modsen.driverservice.exception.handler
 
-import com.software.modsen.driverservice.exception.*
+import com.software.modsen.driverservice.exception.CarAlreadyExistException
+import com.software.modsen.driverservice.exception.CarNotFoundException
+import com.software.modsen.driverservice.exception.DriverNotFoundException
+import com.software.modsen.driverservice.exception.EmailAlreadyExistException
+import com.software.modsen.driverservice.exception.PhoneAlreadyExistException
+import com.software.modsen.driverservice.exception.ServiceUnAvailableException
 import com.software.modsen.driverservice.exception.message.ErrorMessage
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -31,6 +37,13 @@ class GlobalExceptionHandler {
     fun handlerServiceUnAvailableException(e: RuntimeException): ResponseEntity<ErrorMessage> {
         return ResponseEntity
             .status(HttpStatus.BAD_GATEWAY)
+            .body(ErrorMessage(e.message.toString()))
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValid(e: MethodArgumentNotValidException): ResponseEntity<ErrorMessage> {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
             .body(ErrorMessage(e.message.toString()))
     }
 }
