@@ -1,6 +1,7 @@
 package com.software.modsen.driverservice.controller
 
 import com.software.modsen.driverservice.dto.request.DriverRequest
+import com.software.modsen.driverservice.dto.request.InitDriverRequest
 import com.software.modsen.driverservice.dto.response.DriverListResponse
 import com.software.modsen.driverservice.dto.response.DriverResponse
 import com.software.modsen.driverservice.dto.response.DriverWithCarResponse
@@ -15,12 +16,13 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import jakarta.validation.Valid
 import lombok.RequiredArgsConstructor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -33,9 +35,11 @@ import org.springframework.web.bind.annotation.ResponseStatus
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/drivers")
+@Validated
 class DriverController(
     private val driverService: DriverService
 ) {
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @GetMapping("/{id}")
     @Operation(
         description = "Get Driver by ID ",
@@ -61,6 +65,7 @@ class DriverController(
     suspend fun gerDriverById(@PathVariable id: Long): ResponseEntity<DriverWithCarResponse> =
         ResponseEntity.ok(driverService.getDriverById(id).toDriverWithCarResponse())
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     @Operation(description = "Get list of all Drivers")
     @ApiResponse(
@@ -75,6 +80,7 @@ class DriverController(
     suspend fun getAllDrivers(): ResponseEntity<DriverListResponse> =
         ResponseEntity.ok(DriverListResponse(driverService.getAllDrivers().map { it.toDriverResponse() }))
 
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @PostMapping
     @Operation(
         description = "Create Driver",
@@ -100,12 +106,13 @@ class DriverController(
             )
         ]
     )
-    suspend fun createDriver(@RequestBody driverRequest: DriverRequest): ResponseEntity<DriverResponse> {
+    suspend fun createDriver(@RequestBody @Valid driverRequest: InitDriverRequest): ResponseEntity<DriverResponse> {
         val newDriver: Driver = driverRequest.toDriver()
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(driverService.createDriver(driverRequest.carId, newDriver).toDriverResponse())
+            .body(driverService.createDriver(newDriver).toDriverResponse())
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @PutMapping("/{id}")
     @Operation(
         description = "Update Driver",
@@ -144,6 +151,7 @@ class DriverController(
         return ResponseEntity.ok(driverService.updateDriver(id, updatedDriver).toDriverResponse())
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER','ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     @Operation(

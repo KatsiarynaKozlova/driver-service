@@ -106,7 +106,7 @@ class DriverControllerIntegrationTest {
                 content {
                     contentType(MediaType.APPLICATION_JSON)
                 }
-                jsonPath("$.driverId") { value(expectedDriverResponse.driverId) }
+                jsonPath("$.driverId") { value(expectedDriverResponse.id) }
                 jsonPath("$.name") { value(expectedDriverResponse.name) }
                 jsonPath("$.email") { value(expectedDriverResponse.email) }
                 jsonPath("$.phone") { value(expectedDriverResponse.phone) }
@@ -159,7 +159,7 @@ class DriverControllerIntegrationTest {
         )
 
         val defaultUpdatedDriver = DriverResponse(
-                driverId = DEFAULT_ID,
+                id = DEFAULT_ID,
                 name = DEFAULT_NAME,
                 email = DEFAULT_UPDATED_EMAIL,
                 phone = DEFAULT_UPDATED_PHONE,
@@ -183,7 +183,7 @@ class DriverControllerIntegrationTest {
             )
 
         val defaultDriverResponse = DriverResponse(
-                driverId = DEFAULT_ID,
+                id = DEFAULT_ID,
                 name = DEFAULT_NAME,
                 email = DEFAULT_EMAIL,
                 phone = DEFAULT_PHONE,

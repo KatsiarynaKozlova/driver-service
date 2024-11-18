@@ -74,18 +74,16 @@ class DriverServiceTest {
 
         every { driverRepository.existsByPhone(any()) } returns false
         every { driverRepository.existsByEmail(any()) } returns false
-        every { carRepository.findById(any()) } returns Optional.of(getDefaultCar())
         every { driverRepository.save(any()) } returns newDriver
         every { driverProducer.sendDriver(any()) } just Runs
 
-        val result = driverService.createDriver(newDriver.car!!.carId!!, newDriver)
+        val result = driverService.createDriver(newDriver)
 
         assertEquals(newDriver, result)
         verify {
             driverRepository.existsByPhone(newDriver.phone)
             driverRepository.existsByEmail(newDriver.email)
             driverRepository.save(newDriver)
-            carRepository.findById(newDriver.car!!.carId!!)
             driverProducer.sendDriver(getDefaultDriverForRating())
         }
     }
@@ -96,7 +94,7 @@ class DriverServiceTest {
         every { driverRepository.existsByPhone(any()) } returns true
 
         assertThrows<PhoneAlreadyExistException> {
-            driverService.createDriver(newDriver.car!!.carId!!, newDriver)
+            driverService.createDriver(newDriver)
         }
 
         verify { driverRepository.existsByPhone(newDriver.phone) }
@@ -110,7 +108,7 @@ class DriverServiceTest {
         every { driverRepository.existsByEmail(any()) } returns true
 
         assertThrows<EmailAlreadyExistException> {
-            driverService.createDriver(newDriver.car!!.carId!!, newDriver)
+            driverService.createDriver(newDriver)
         }
         verify {
             driverRepository.existsByPhone(newDriver.phone)
@@ -194,7 +192,7 @@ class DriverServiceTest {
 
     private fun getDefaultDriver() =
         Driver(
-            driverId = 1L,
+            id = 1L,
             name = "alex",
             email = "email@mail.ru",
             phone = "1234567890",
@@ -204,7 +202,7 @@ class DriverServiceTest {
 
     private fun getDefaultUpdatedDriver() =
         Driver(
-            driverId = 1L,
+            id = 1L,
             name = "Alex",
             email = "new_email@mail.ru",
             phone = "0987654321",
