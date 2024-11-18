@@ -17,6 +17,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.verify
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -38,7 +39,7 @@ class DriverServiceTest {
     private lateinit var driverService: DriverService
 
     @Test
-    fun `should return driver by id`() {
+    fun `should return driver by id`()  = runBlocking {
         val expectedDriver = getDefaultDriver()
         every { driverRepository.findById(any()) } returns Optional.of(expectedDriver)
 
@@ -51,7 +52,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return driver not found exception on get by id`() {
+    fun `should return driver not found exception on get by id`(): Unit = runBlocking {
         every { driverRepository.findById(any()) } returns Optional.empty()
         assertThrows<DriverNotFoundException> {
             driverService.getDriverById(DEFAULT_ID)
@@ -59,7 +60,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return list of Drivers`() {
+    fun `should return list of Drivers`()  = runBlocking {
         val driverList: List<Driver> = listOf(getDefaultDriver())
         every { driverRepository.findAll() } returns driverList
 
@@ -68,7 +69,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return new Driver`() {
+    fun `should return new Driver`()  = runBlocking {
         val newDriver = getDefaultDriver()
 
         every { driverRepository.existsByPhone(any()) } returns false
@@ -90,7 +91,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return phone already exist exception on create driver`() {
+    fun `should return phone already exist exception on create driver`()  = runBlocking {
         val newDriver = getDefaultDriver()
         every { driverRepository.existsByPhone(any()) } returns true
 
@@ -102,7 +103,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return email already exist exception on create driver`() {
+    fun `should return email already exist exception on create driver`()  = runBlocking {
         val newDriver = getDefaultDriver()
 
         every { driverRepository.existsByPhone(any()) } returns false
@@ -118,7 +119,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return updated Driver`() {
+    fun `should return updated Driver`()  = runBlocking {
         val updatedDriver = getDefaultUpdatedDriver()
         val driver = getDefaultDriver()
 
@@ -139,7 +140,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return email already exist exception on update driver`() {
+    fun `should return email already exist exception on update driver`() = runBlocking {
         val updatedDriver = getDefaultUpdatedDriver()
         val driver = getDefaultDriver()
 
@@ -157,7 +158,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return phone already exist exception on update driver`() {
+    fun `should return phone already exist exception on update driver`() = runBlocking {
         val updatedDriver = getDefaultUpdatedDriver()
         val driver = getDefaultDriver()
 
@@ -177,7 +178,7 @@ class DriverServiceTest {
     }
 
     @Test
-    fun `should return driver not found exception on update driver`() {
+    fun `should return driver not found exception on update driver`() = runBlocking {
         val updatedDriver = getDefaultUpdatedDriver()
 
         every { driverRepository.findById(any()) } returns Optional.empty()

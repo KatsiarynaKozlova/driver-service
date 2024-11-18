@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.3.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.software.modsen</groupId>
@@ -21,7 +21,7 @@
         <jackson-databind.version>2.18.0</jackson-databind.version>
         <mockk.version>1.13.12</mockk.version>
         <junit-jupiter.version>5.11.2</junit-jupiter.version>
-        <testcontainers.version>1.20.2</testcontainers.version>
+        <testcontainers.version>1.20.3</testcontainers.version>
         <micrometer-registry-prometheus.version>1.13.6</micrometer-registry-prometheus.version>
         <kotlinx-coroutines-core.version>1.9.0</kotlinx-coroutines-core.version>
         <kotlin-compiler.version>1.9.25</kotlin-compiler.version>
@@ -176,6 +176,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
     <dependencyManagement>

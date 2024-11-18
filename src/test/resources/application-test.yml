@@ -3,11 +3,16 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
-  liquibase:
-    enabled: false
   config:
     activate:
       on-profile: test
+  application:
+    name: driver-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/test_db
   kafka:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -18,4 +23,3 @@ spring:
       retries: 3
       linger.ms: 1
       spring.json.add.type.headers: false
-      
