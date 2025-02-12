@@ -17,11 +17,14 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 import org.springframework.test.web.servlet.post
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.servlet.function.RequestPredicates
+import org.testcontainers.junit.jupiter.Testcontainers
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@SpringBootTest
+@Transactional
+@Testcontainers
 @AutoConfigureMockMvc
 @Import(DatabaseContainerConfiguration::class)
 class CarControllerIntegrationTest {

@@ -9,6 +9,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -25,7 +26,7 @@ class CarServiceTest {
     private lateinit var carService: CarService
 
     @Test
-    fun `should return car by id`() {
+    fun `should return car by id`() = runBlocking {
         val expectedCar = getDefaultCar()
         every { carRepository.findById(any()) } returns Optional.of(expectedCar)
 
@@ -38,7 +39,7 @@ class CarServiceTest {
     }
 
     @Test
-    fun `should return car not found exception on get by id`() {
+    fun `should return car not found exception on get by id`(): Unit = runBlocking {
         every { carRepository.findById(any()) } returns Optional.empty()
         assertThrows<CarNotFoundException> {
             carService.getCarById(DEFAULT_ID)
@@ -46,7 +47,7 @@ class CarServiceTest {
     }
 
     @Test
-    fun `should return list of cars`() {
+    fun `should return list of cars`()  = runBlocking {
         every { carRepository.findAll() } returns listOf(getDefaultCar())
 
         val result = carService.getAllCars()
@@ -56,7 +57,7 @@ class CarServiceTest {
     }
 
     @Test
-    fun `should return new car`() {
+    fun `should return new car`()  = runBlocking {
         val expectedCar = getDefaultCar()
         every { carRepository.existsByLicensePlate(any()) } returns false
         every { carRepository.save(any()) } returns expectedCar
@@ -72,7 +73,7 @@ class CarServiceTest {
     }
 
     @Test
-    fun `should return car already exist exception on create car`() {
+    fun `should return car already exist exception on create car`()  = runBlocking {
         val expectedCar = getDefaultCar()
         every { carRepository.existsByLicensePlate(any()) } returns true
 
@@ -84,7 +85,7 @@ class CarServiceTest {
     }
 
     @Test
-    fun `should return updated car`() {
+    fun `should return updated car`()  = runBlocking {
         val expectedCar = getDefaultUpdatedCar()
         every { carRepository.findById(any()) } returns Optional.of(getDefaultCar())
         every { carRepository.existsByLicensePlate(any()) } returns false
@@ -102,7 +103,7 @@ class CarServiceTest {
     }
 
     @Test
-    fun `should return car already exist exception on update car`() {
+    fun `should return car already exist exception on update car`()  = runBlocking {
         val expectedCar = getDefaultUpdatedCar()
         every { carRepository.findById(any()) } returns Optional.of(getDefaultCar())
         every { carRepository.existsByLicensePlate(any()) } returns true
@@ -118,7 +119,7 @@ class CarServiceTest {
     }
 
     @Test
-    fun `should return car not found exception on update car`() {
+    fun `should return car not found exception on update car`()  = runBlocking {
         val expectedCar = getDefaultUpdatedCar()
         every { carRepository.findById(any()) } returns Optional.empty()
 

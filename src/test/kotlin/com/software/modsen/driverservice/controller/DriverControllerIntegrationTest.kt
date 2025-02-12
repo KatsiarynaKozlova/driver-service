@@ -20,10 +20,13 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.servlet.function.RequestPredicates
+import org.testcontainers.junit.jupiter.Testcontainers
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@SpringBootTest
+@Testcontainers
+@Transactional
 @AutoConfigureMockMvc
 @Import(DatabaseContainerConfiguration::class, KafkaContainerConfiguration::class)
 class DriverControllerIntegrationTest {
