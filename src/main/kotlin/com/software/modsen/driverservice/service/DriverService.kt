@@ -28,14 +28,13 @@ class DriverService(
 
     suspend fun getAllDrivers(): List<Driver> = withContext(Dispatchers.IO) { driverRepository.findAll() }
 
-    suspend fun createDriver(carId: Long, newDriver: Driver): Driver {
+    suspend fun createDriver(newDriver: Driver): Driver {
         preCreateValidateDriver(newDriver)
-        newDriver.car = getCarByIdOrElseThrow(carId)
         val driver = withContext(Dispatchers.IO) {
             driverRepository.save(newDriver)
         }
         try{
-            val driverForRating = DriverForRating(driver.driverId!!)
+            val driverForRating = DriverForRating(driver.id!!)
             driverProducer.sendDriver(driverForRating)
         }catch (e: Exception){
             throw ServiceUnAvailableException(ExceptionMessages.SERVICE_UNAVAILABLE)
@@ -47,7 +46,7 @@ class DriverService(
     suspend fun updateDriver(id: Long, updatedDriver: Driver): Driver {
         val driverOptional: Driver = getByIdOrElseThrow(id)
         preUpdateValidateCar(updatedDriver, driverOptional)
-        updatedDriver.driverId = id
+        updatedDriver.id = id
         return withContext(Dispatchers.IO) { driverRepository.save(updatedDriver) }
     }
 

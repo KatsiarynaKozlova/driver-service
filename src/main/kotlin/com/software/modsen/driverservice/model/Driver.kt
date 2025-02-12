@@ -15,12 +15,12 @@ import org.hibernate.annotations.SQLDelete
 
 @Entity
 @Table(name = "drivers")
-@SQLDelete(sql = "UPDATE drivers SET is_deleted = true WHERE driver_id=?")
+@SQLDelete(sql = "UPDATE drivers SET is_deleted = true WHERE id=?")
 class Driver(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "driver_id")
-    var driverId: Long?,
+    @Column(name = "id")
+    var id: Long?,
     @Column(name = "name")
     var name: String,
     @Column(name = "email")
